@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Data;
@@ -12,13 +12,13 @@ namespace category_data_analysis
         //返回最新的数据库
         public static string GetConnectionString()
         {
-            return "Data Source=127.0.0.1;Database=poi;User ID=root;Password=YYhh220929";
+            return "Data Source=127.0.0.1;Database=wei_bo;User ID=root;Password=root;max pool size=1024";
             //return "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=127.0.0.1;Database=poi;User ID=root;Jet OLEDB:Database Password=YYhh220929";
         }
         //返回之前错误的数据库，因为有时间数据
         public static string GetConnectionString2()
         {
-            return "Data Source=127.0.0.1;Database=poi;User ID=root;Password=YYhh220929";
+            return "Data Source=127.0.0.1;Database=wei_bo;User ID=root;Password=root;";
             //return "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=127.0.0.1;Database=poi;User ID=root;Jet OLEDB:Database Password=YYhh220929";
         }
         //------------------------------------------------------------------------------------------
