@@ -142,20 +142,15 @@ namespace category_data_analysis
             MySqlConnection cnn = null;
             MySqlCommand cmd = null;
 
-            try
-            {
+            
                 cnn = new MySqlConnection(connectionStringStr);
                 cnn.Open();
 
                 cmd = new MySqlCommand(sqlStr, cnn);
                 cmd.ExecuteNonQuery();
 
-            }
-            catch (Exception e)
-            {
-                System.Console.WriteLine(e.Message);
-                return false;
-            }
+
+            
 
             return true;
 
