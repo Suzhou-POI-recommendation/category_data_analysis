@@ -89,30 +89,31 @@ namespace category_data_analysis
             if (dr == null || !dr.Read())
             {
                 Console.WriteLine("数据读取错误");
+                return -1;
             }
-        
-            float m = 0;float f = 0;
-             do
-             {
+
+            float m = 0; float f = 0;
+            do
+            {
                 // Console.WriteLine(Convert.ToString(dr[0]));
-                 string strSQL1 = String.Format("SELECT gender FROM travel_poi_userinfo_suzhou WHERE id=\"{0}\"", dr[0]);
-                 MySqlDataReader dr1 = DataAccess.ExecuteReader2(DataAccess.GetConnectionString(), strSQL1);
-                 if (dr1 == null || !dr1.Read())
-                 {
-                     Console.WriteLine("数据读取错误");
-                 }                 
+                string strSQL1 = String.Format("SELECT gender FROM travel_poi_userinfo_suzhou WHERE id=\"{0}\"", dr[0]);
+                MySqlDataReader dr1 = DataAccess.ExecuteReader2(DataAccess.GetConnectionString(), strSQL1);
+                if (dr1 == null || !dr1.Read())
+                {
+                    Console.WriteLine("数据读取错误");
+                    return -1;
+                }
                 //  Console.WriteLine(Convert.ToString(dr1[0]));
                 if (Convert.ToString(dr1[0]) == "m")
                     m++;
                 else if (Convert.ToString(dr1[0]) == "f")
                     f++;
-                 
-             } while (dr.Read());   
+
+            }while (dr.Read());   
             Console.WriteLine("M:{0}",m);
             Console.WriteLine("F:{0}", f);
-            float ratio =-1;
-            if (f != 0)
-                ratio = m / f;
+            float all = f + m;
+            float ratio = m / all;
             return ratio;
           
         }
@@ -132,6 +133,7 @@ namespace category_data_analysis
             if (dr == null || !dr.Read())
             {
                 Console.WriteLine("数据读取错误");
+                return -1;
             }
             float local = 0;float all = 0;
             do
@@ -142,6 +144,7 @@ namespace category_data_analysis
                 if (dr1 == null || !dr1.Read())
                 {
                     Console.WriteLine("数据读取错误");
+                    return -1;
                 }
                 int province = Convert.ToInt32(dr1[0]);int city = Convert.ToInt32(dr1[1]);
                 //Console.WriteLine("{0} {1}",province,city);
@@ -172,6 +175,7 @@ namespace category_data_analysis
             if (dr == null || !dr.Read())
             {
                 Console.WriteLine("数据读取错误");
+                return -1;
             }
             int verified = 0;// float all = 0;
             do
@@ -182,6 +186,7 @@ namespace category_data_analysis
                 if (dr1 == null || !dr1.Read())
                 {
                     Console.WriteLine("数据读取错误");
+                    return -1;
                 }
                 if (Convert.ToInt32(dr1[0])==0|| Convert.ToInt32(dr1[0]) ==200|| Convert.ToInt32(dr1[0]) ==220)
                     verified++;
@@ -194,5 +199,91 @@ namespace category_data_analysis
              //return ratio;
             return verified;
         }
+
+         public static void form_table()
+         {
+             string strSQL = String.Format("SELECT poiid FROM pois_suzhou LIMIT 11740,150");
+             MySqlDataReader dr = DataAccess.ExecuteReader2(DataAccess.GetConnectionString(), strSQL);
+
+             //通过非连接模式，需要修改provider
+             //DataTable result_table = DataAccess.ExecuteQuery(DataAccess.GetConnectionString(), strSQL);
+             //return Convert.ToSingle(result_table.Rows[0][0]) / Convert.ToSingle(result_table.Rows[0][1]);
+
+             if (dr == null || !dr.Read())
+             {
+                 Console.WriteLine("数据读取错误");
+             }
+             else
+             {
+                 do
+                 {
+                    string id = Convert.ToString(dr[0]);
+                    Console.WriteLine(id);
+                     float gender = GenderRatio(id);
+                     float local = LocalRatio(id);
+                    Console.WriteLine("{0},{1}",gender,local);
+                    string strSQL1 = String.Format("INSERT INTO pois_characteristic(poiid,gender_ratio,local_ratio) VALUES(\"{0}\",\"{1}\",\"{2}\")", id,gender,local);
+                    MySqlDataReader dr1 = DataAccess.ExecuteReader2(DataAccess.GetConnectionString(), strSQL1);
+                } while (dr.Read());
+             }
+         }
+
+        public static void form_table1()//对所有poi运算
+        {
+            string strSQL = String.Format("SELECT poiid FROM pois_suzhou LIMIT 4, 2");
+            MySqlDataReader dr = DataAccess.ExecuteReader2(DataAccess.GetConnectionString(), strSQL);
+
+            //通过非连接模式，需要修改provider
+            //DataTable result_table = DataAccess.ExecuteQuery(DataAccess.GetConnectionString(), strSQL);
+            //return Convert.ToSingle(result_table.Rows[0][0]) / Convert.ToSingle(result_table.Rows[0][1]);
+
+            if (dr == null || !dr.Read())
+            {
+                Console.WriteLine("数据读取错误");
+            }       
+                do
+                {
+                     Console.WriteLine(Convert.ToString(dr[0]));
+                //float gender = GenderRatio(Convert.ToString(dr[0]));
+                //float local = LocalRatio(Convert.ToString(dr[0]));
+                string id = Convert.ToString(dr[0]);
+                    string strSQL1 = String.Format("INSERT INTO poi_characteristic(poiid) VALUES(\"{0}\")",id);
+                    MySqlDataReader dr1 = DataAccess.ExecuteReader2(DataAccess.GetConnectionString(), strSQL1);
+                } while (dr.Read());
+            
+        }
+
+
+        public static void form_table2()
+        {
+            string strSQL = String.Format("SELECT poiid FROM pois_suzhou WHERE checkin_num>0 LIMIT 234444,200");//仅对有人打卡的poi运算
+            MySqlDataReader dr = DataAccess.ExecuteReader2(DataAccess.GetConnectionString(), strSQL);
+
+            //通过非连接模式，需要修改provider
+            //DataTable result_table = DataAccess.ExecuteQuery(DataAccess.GetConnectionString(), strSQL);
+            //return Convert.ToSingle(result_table.Rows[0][0]) / Convert.ToSingle(result_table.Rows[0][1]);
+
+            if (dr == null || !dr.Read())
+            {
+                Console.WriteLine("数据读取错误");
+            }
+            else
+            {
+                int count = 0;
+                do
+                {
+                    count++;
+                    string id = Convert.ToString(dr[0]);
+                    Console.WriteLine(id);
+                    Console.WriteLine("{0}",count);
+                    float gender = GenderRatio(id);
+                    float local = LocalRatio(id);
+                    Console.WriteLine("{0},{1}", gender, local);
+                    string strSQL1 = String.Format("INSERT INTO pois_characteristic(poiid,gender_ratio,local_ratio) VALUES(\"{0}\",\"{1}\",\"{2}\")", id, gender, local);
+                    MySqlDataReader dr1 = DataAccess.ExecuteReader2(DataAccess.GetConnectionString(), strSQL1);
+                } while (dr.Read());
+            }
+        }      
+
     }
 }
