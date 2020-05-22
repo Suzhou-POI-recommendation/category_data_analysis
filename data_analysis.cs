@@ -59,11 +59,11 @@ namespace category_data_analysis
                 return null;
             }
             DateTime date;
-            int month=-1;
+            int month = -1;
             while (dr.Read())
             {
-                
-                date= Convert.ToDateTime(dr[0]);
+
+                date = Convert.ToDateTime(dr[0]);
                 //Console.WriteLine(date.ToString());
                 month = date.Month;
                 if (month <= 0) Console.WriteLine("月份读取错误");
@@ -72,6 +72,127 @@ namespace category_data_analysis
 
             //单数据处理
             return checkin_by_month;
+        }
+
+
+        //计算在某个poi处打卡用户的男女比例，女性为0则返回-1；
+        //需要先更改mysql的max connections数
+        public static float GenderRatio(string poi)
+        {
+            string strSQL = String.Format("SELECT DISTINCT uid FROM travel_poi_weibos_suzhou WHERE annotation_place_poiid=\"{0}\"", poi);
+            MySqlDataReader dr = DataAccess.ExecuteReader2(DataAccess.GetConnectionString(), strSQL);
+
+            //通过非连接模式，需要修改provider
+            //DataTable result_table = DataAccess.ExecuteQuery(DataAccess.GetConnectionString(), strSQL);
+            //return Convert.ToSingle(result_table.Rows[0][0]) / Convert.ToSingle(result_table.Rows[0][1]);
+
+            if (dr == null || !dr.Read())
+            {
+                Console.WriteLine("数据读取错误");
+            }
+        
+            float m = 0;float f = 0;
+             do
+             {
+                // Console.WriteLine(Convert.ToString(dr[0]));
+                 string strSQL1 = String.Format("SELECT gender FROM travel_poi_userinfo_suzhou WHERE id=\"{0}\"", dr[0]);
+                 MySqlDataReader dr1 = DataAccess.ExecuteReader2(DataAccess.GetConnectionString(), strSQL1);
+                 if (dr1 == null || !dr1.Read())
+                 {
+                     Console.WriteLine("数据读取错误");
+                 }                 
+                //  Console.WriteLine(Convert.ToString(dr1[0]));
+                if (Convert.ToString(dr1[0]) == "m")
+                    m++;
+                else if (Convert.ToString(dr1[0]) == "f")
+                    f++;
+                 
+             } while (dr.Read());   
+            Console.WriteLine("M:{0}",m);
+            Console.WriteLine("F:{0}", f);
+            float ratio =-1;
+            if (f != 0)
+                ratio = m / f;
+            return ratio;
+          
+        }
+
+
+        //计算在某个poi处打卡用户的本地比例
+        //需要先更改mysql的max connections数
+        public static float LocalRatio(string poi)
+        {
+            string strSQL = String.Format("SELECT DISTINCT uid FROM travel_poi_weibos_suzhou WHERE annotation_place_poiid=\"{0}\"", poi);
+            MySqlDataReader dr = DataAccess.ExecuteReader2(DataAccess.GetConnectionString(), strSQL);
+
+            //通过非连接模式，需要修改provider
+            //DataTable result_table = DataAccess.ExecuteQuery(DataAccess.GetConnectionString(), strSQL);
+            //return Convert.ToSingle(result_table.Rows[0][0]) / Convert.ToSingle(result_table.Rows[0][1]);
+
+            if (dr == null || !dr.Read())
+            {
+                Console.WriteLine("数据读取错误");
+            }
+            float local = 0;float all = 0;
+            do
+            {
+               // Console.WriteLine(Convert.ToString(dr[0]));
+                string strSQL1 = String.Format("SELECT province,city FROM travel_poi_userinfo_suzhou WHERE id=\"{0}\"", dr[0]);
+                MySqlDataReader dr1 = DataAccess.ExecuteReader2(DataAccess.GetConnectionString(), strSQL1);
+                if (dr1 == null || !dr1.Read())
+                {
+                    Console.WriteLine("数据读取错误");
+                }
+                int province = Convert.ToInt32(dr1[0]);int city = Convert.ToInt32(dr1[1]);
+                //Console.WriteLine("{0} {1}",province,city);
+                if (province==32 && city==5)
+                    local++;
+                all++;
+            } while (dr.Read());
+            Console.WriteLine("Local:{0}", local);
+            Console.WriteLine("All:{0}", all);
+            float ratio=0;
+            ratio = local / all;
+            return ratio;
+
+        }
+
+
+        //计算在某个poi处打卡的名人、达人数量（或比例）
+        //需要先更改mysql的max connections数
+        public static float VerifiedRatio(string poi)
+        {
+            string strSQL = String.Format("SELECT DISTINCT uid FROM travel_poi_weibos_suzhou WHERE annotation_place_poiid=\"{0}\"", poi);
+            MySqlDataReader dr = DataAccess.ExecuteReader2(DataAccess.GetConnectionString(), strSQL);
+
+            //通过非连接模式，需要修改provider
+            //DataTable result_table = DataAccess.ExecuteQuery(DataAccess.GetConnectionString(), strSQL);
+            //return Convert.ToSingle(result_table.Rows[0][0]) / Convert.ToSingle(result_table.Rows[0][1]);
+
+            if (dr == null || !dr.Read())
+            {
+                Console.WriteLine("数据读取错误");
+            }
+            int verified = 0;// float all = 0;
+            do
+            {
+                //Console.WriteLine(Convert.ToString(dr[0]));
+                string strSQL1 = String.Format("SELECT verified_type FROM travel_poi_userinfo_suzhou WHERE id=\"{0}\"", dr[0]);
+                MySqlDataReader dr1 = DataAccess.ExecuteReader2(DataAccess.GetConnectionString(), strSQL1);
+                if (dr1 == null || !dr1.Read())
+                {
+                    Console.WriteLine("数据读取错误");
+                }
+                if (Convert.ToInt32(dr1[0])==0|| Convert.ToInt32(dr1[0]) ==200|| Convert.ToInt32(dr1[0]) ==220)
+                    verified++;
+               // all++;            
+            } while (dr.Read());
+            Console.WriteLine("Verified:{0}", verified);
+            // Console.WriteLine("All:{0}", all);
+           // float ratio = 0;
+            // ratio = verified / all;
+             //return ratio;
+            return verified;
         }
     }
 }
