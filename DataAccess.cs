@@ -12,8 +12,10 @@ namespace category_data_analysis
         //返回最新的数据库
         public static string GetConnectionString()
         {
-            return "Data Source=127.0.0.1;Database=wei_bo;User ID=root;Password=root;max pool size=1024";
+            //return "Data Source=127.0.0.1;Database=wei_bo;User ID=root;Password=root;max pool size=1024";
+            return "Data Source=127.0.0.1;Database=poi;User ID=root;Password=YYhh220929";
             //return "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=127.0.0.1;Database=poi;User ID=root;Jet OLEDB:Database Password=YYhh220929";
+            
         }
         //返回之前错误的数据库，因为有时间数据
         public static string GetConnectionString2()
@@ -128,8 +130,8 @@ namespace category_data_analysis
             {
                 System.Console.WriteLine(e.Message);
             }
-
-            //cnn.Close();
+            Console.WriteLine(rst[0]);
+            cnn.Close();           
             return rst;
 
         }
@@ -158,6 +160,33 @@ namespace category_data_analysis
             }
 
             return true;
+
+        }
+        //------------------------------------------------------------------------------------------
+        //非连接模式；MySQL OLE DB；非查询操作
+        //------------------------------------------------------------------------------------------
+        public static DataTable ExecuteQuery2(string connectionString, string strSQL)
+        {
+            MySqlConnection cnn = new MySqlConnection(connectionString);
+            DataTable dt = null;
+
+            try
+            {
+
+                MySqlDataAdapter adapter = new MySqlDataAdapter(strSQL, cnn);
+                DataSet ds = new DataSet();
+                if (adapter.Fill(ds) > 0)
+                    dt = ds.Tables[0];
+            }
+            catch (Exception msg)
+            {
+                System.Console.WriteLine(msg.ToString());
+                return dt;
+            }
+
+            cnn.Close();
+
+            return dt;
 
         }
     }

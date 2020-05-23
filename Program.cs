@@ -18,12 +18,14 @@ namespace category_data_analysis
     {
         static void Main(string[] args)
         {
+            //data_analysis.GetPoiid();
+            data_analysis.GenderRatioToSql();
             //Console.WriteLine(data_analysis.CalcRatio("B2094757D164A2FE4093"));
-           // Console.WriteLine(data_analysis.CalcTime("B2094650D064A0F5469D"));
-            Console.WriteLine(data_analysis.GenderRatio("B2094650D064A0F8489B"));
-            Console.WriteLine(data_analysis.LocalRatio("B2094650D064A0F8489B"));
-            Console.WriteLine(data_analysis.VerifiedRatio("B2094650D064A0F8489B"));
-            Console.WriteLine("这个语句的意义是防止控制台自动退出");
+            //Console.WriteLine(string.Join("\0",data_analysis.CalcTime("B2094650D064A0F5469D")));
+            //Console.WriteLine(data_analysis.GenderRatio("B2094650D064A0F8489B"));
+            //Console.WriteLine(data_analysis.LocalRatio("B2094650D064A0F8489B"));
+            //Console.WriteLine(data_analysis.VerifiedRatio("B2094650D064A0F8489B"));
+            Console.Read();
         }
     }
 }
