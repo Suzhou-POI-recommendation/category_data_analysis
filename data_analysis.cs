@@ -95,30 +95,31 @@ namespace category_data_analysis
             if (dr == null || !dr.Read())
             {
                 Console.WriteLine("数据读取错误");
+                return -1;
             }
-        
-            float m = 0;float f = 0;
-             do
-             {
+
+            float m = 0; float f = 0;
+            do
+            {
                 // Console.WriteLine(Convert.ToString(dr[0]));
-                 string strSQL1 = String.Format("SELECT gender FROM travel_poi_userinfo_suzhou WHERE id=\"{0}\"", dr[0]);
-                 MySqlDataReader dr1 = DataAccess.ExecuteReader2(DataAccess.GetConnectionString(), strSQL1);
-                 if (dr1 == null || !dr1.Read())
-                 {
-                     Console.WriteLine("数据读取错误");
-                 }                 
+                string strSQL1 = String.Format("SELECT gender FROM travel_poi_userinfo_suzhou WHERE id=\"{0}\"", dr[0]);
+                MySqlDataReader dr1 = DataAccess.ExecuteReader2(DataAccess.GetConnectionString(), strSQL1);
+                if (dr1 == null || !dr1.Read())
+                {
+                    Console.WriteLine("数据读取错误");
+                    return -1;
+                }
                 //  Console.WriteLine(Convert.ToString(dr1[0]));
                 if (Convert.ToString(dr1[0]) == "m")
                     m++;
                 else if (Convert.ToString(dr1[0]) == "f")
                     f++;
-                 
-             } while (dr.Read());   
+
+            }while (dr.Read());   
             Console.WriteLine("M:{0}",m);
             Console.WriteLine("F:{0}", f);
-            float ratio =-1;
-            if (f != 0)
-                ratio = m / f;
+            float all = f + m;
+            float ratio = m / all;
             return ratio;
           
         }
@@ -138,6 +139,7 @@ namespace category_data_analysis
             if (dr == null || !dr.Read())
             {
                 Console.WriteLine("数据读取错误");
+                return -1;
             }
             float local = 0;float all = 0;
             do
@@ -148,6 +150,7 @@ namespace category_data_analysis
                 if (dr1 == null || !dr1.Read())
                 {
                     Console.WriteLine("数据读取错误");
+                    return -1;
                 }
                 int province = Convert.ToInt32(dr1[0]);int city = Convert.ToInt32(dr1[1]);
                 //Console.WriteLine("{0} {1}",province,city);
@@ -178,6 +181,7 @@ namespace category_data_analysis
             if (dr == null || !dr.Read())
             {
                 Console.WriteLine("数据读取错误");
+                return -1;
             }
             int verified = 0;// float all = 0;
             do
@@ -188,6 +192,7 @@ namespace category_data_analysis
                 if (dr1 == null || !dr1.Read())
                 {
                     Console.WriteLine("数据读取错误");
+                    return -1;
                 }
                 if (Convert.ToInt32(dr1[0])==0|| Convert.ToInt32(dr1[0]) ==200|| Convert.ToInt32(dr1[0]) ==220)
                     verified++;
@@ -200,6 +205,7 @@ namespace category_data_analysis
              //return ratio;
             return verified;
         }
+
 
 
         //导入数据库
@@ -315,6 +321,8 @@ namespace category_data_analysis
             return 0;
         }
 
+        
+=======
         
     }
 }

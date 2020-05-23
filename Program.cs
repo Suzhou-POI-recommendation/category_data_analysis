@@ -26,6 +26,7 @@ namespace category_data_analysis
             //Console.WriteLine(data_analysis.LocalRatio("B2094650D064A0F8489B"));
             //Console.WriteLine(data_analysis.VerifiedRatio("B2094650D064A0F8489B"));
             Console.Read();
+
         }
     }
 }
